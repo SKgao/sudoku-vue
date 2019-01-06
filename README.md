@@ -1,29 +1,29 @@
 # sudoku-vue
+vue版本的数独小游戏。
 
-## Project setup
+## 安装依赖
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 本地运行
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### 线上发布
 ```
 npm run build
 ```
 
-### Run your tests
+### 本地测试
 ```
 npm run test
 ```
 
-### Lints and fixes files
+### 代码检验
 ```
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 项目依赖vue-cli3.x构建
