@@ -9,8 +9,14 @@
         <span
           v-for="(col, j) in row"
           :key="j"
-          :class="[colClass[j % 3], {empty: !col}, {fixed: col}]"
-          @click="col ? false : clickGrid(i, j)">{{ col }}</span>
+          :class="[
+            colClass[j % 3],
+            {empty: !col},
+            {fixed: cloneMatrix[i][j]},
+            {mark1: !cloneMatrix[i][j]},
+            {error: (!matrixMarks[i][j] || !col) && !clearErrorMarks}
+          ]"
+          @click="cloneMatrix[i][j] ? false : clickGrid(i, j)">{{ col }}</span>
       </div>
     </div>
 
@@ -26,9 +32,9 @@
     <div class="popup-num grid"
       v-show="popShow"
       :style="{
-          top: `calc(${gridPosition[0] * 10}vw + ${gridPosition[0]}px)`,
-          left: gridPosition[1] < 4 ? (gridPosition[1] + 1) * 10 + 'vw' : (gridPosition[1] * 10) - 39 + 'vw'
-        }">
+        top: `calc(${gridPosition[0] * 10}vw + ${gridPosition[0] + 1}px)`,
+        left: gridPosition[1] < 4 ? (gridPosition[1] + 1) * 10 + 'vw' : (gridPosition[1] * 10) - 39.5 + 'vw'
+      }">
 
       <div class="row"
         v-for="(row, i) in popupNumbers"
@@ -63,11 +69,11 @@ export default {
   },
   methods: {
     handleButton (type) {
-
+      this.$store.dispatch('handleGame', type)
     },
     clickGrid (i, j) {
       this.$store.dispatch('clickGrid', [i, j]).then(() => {
-        this.$store.dispatch('togglePop')
+        this.$store.dispatch('togglePop', true)
       })
     },
     modifyGrid (val) {

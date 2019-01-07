@@ -8,6 +8,14 @@ const matrixToolkit = {
   },
 
   /**
+   * 深度克隆（不考虑复杂对象等情况）
+   * @param {*} array
+   */
+  deepClone (val) {
+    return JSON.parse(JSON.stringify(val))
+  },
+
+  /**
    * shuffle 洗牌算法，打乱数组
    */
   shuffle (array = []) {

@@ -75,13 +75,16 @@ h1, h2 {
       color: transparent;
     }
     &.mark1 {
-      background: lightblue;
+      background: #cfeef9;
     }
     &.mark2 {
       background: lightgreen;
     }
     &.error {
-      background: lightpink;
+      background: lightpink !important;
+    }
+    &.wrong {
+      color: lightpink !important;
     }
     &.col_g_left {
       border-left-width: 1px;
@@ -159,7 +162,6 @@ h1, h2 {
   margin-top: calc(6.5rem + 1px);
   margin-left: calc(5vw + 1px);
   box-shadow: @shadow;
-  border: 1px solid white;
   color: white;
   div {
     > span {
