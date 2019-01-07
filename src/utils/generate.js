@@ -7,7 +7,7 @@ class Generator {
    */
   init () {
     while (!this.generate()) {
-      console.log('重新生成')
+      continue
     }
     return this.matrix
   }
@@ -54,5 +54,12 @@ class Generator {
   }
 }
 
-export const generator = new Generator().init()
+export default Generator
 
+// 生成迷盘
+export const puzzleMatrix = (level = 5) => {
+  const generator = new Generator().init()
+  return generator.map(row => {
+    return row.map(cell => Math.random() * 9 < level ? 0 : cell)
+  })
+}

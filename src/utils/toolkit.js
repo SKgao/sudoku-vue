@@ -4,7 +4,7 @@ const matrixToolkit = {
    * 生产9*9的数组矩阵，不传值全部为0
    */
   makeMatrix (value = 0) {
-    return Array.from({ length: 9 }, () => new Array(9).fill(value || 0))
+    return Array(9).fill().map(_ => Array(9).fill(value))
   },
 
   /**

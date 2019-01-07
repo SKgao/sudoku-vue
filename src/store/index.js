@@ -5,9 +5,7 @@ import main from './modules/main'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
-  modules: {
-    main
-  },
+  modules: { main },
   getters: Object.keys(main.state).reduce((a, b) => {
     return { ...a, [b]: state => state.main[b] }
   }, {})

@@ -1,12 +1,8 @@
 import Vue from 'vue'
-import { generator } from '../../utils/generate'
-import { puzzleMatrix } from '../../utils/sudoku'
-import Checker from '../../utils/checker'
-const myChecker = new Checker(generator)
-myChecker.checkAll()
+import Generator, { puzzleMatrix } from 'utils/generate'
+// console.log(myChecker.isSuccess(), myChecker.matrixMarks())
 
-console.log(puzzleMatrix())
-//console.log(myChecker.isSuccess(), myChecker.matrixMarks())
+console.log('Generator-->', new Generator().init())
 
 const main = {
   state: {
@@ -23,7 +19,7 @@ const main = {
       },
       {
         key: 'reset',
-        text: '充值'
+        text: '重置'
       },
       {
         key: 'clear',
@@ -38,7 +34,7 @@ const main = {
       [1, 2, 3],
       [4, 5, 6],
       [7, 8, 9],
-      [0, 0, 0]
+      ['', 0, '']
     ]
   },
 
@@ -51,21 +47,21 @@ const main = {
         Vue.set(state.gridPosition, i, e)
       })
     },
-    MODIFY_GRID: (state, number) => {
-      Vue.set(state.matrix[state.gridPosition[0]], state.gridPosition[1], number)
-    },
+    MODIFY_GRID: (state, num) => {
+      Vue.set(state.matrix[state.gridPosition[0]], state.gridPosition[1], num)
+    }
   },
 
   actions: {
-    togglePop({ commit }) {
+    togglePop ({ commit }) {
       commit('TOGGLE_POP')
     },
-    clickGrid({ commit }, gridPosition) {
+    clickGrid ({ commit }, gridPosition) {
       commit('CLICK_GRID', gridPosition)
     },
-    modifyGrid({ commit }, number) {
-      commit('MODIFY_GRID', number)
-    },
+    modifyGrid ({ commit }, num) {
+      commit('MODIFY_GRID', num)
+    }
 
   }
 }

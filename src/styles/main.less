@@ -5,7 +5,7 @@
 @shadowBottom: 0 0.2rem 0.3rem rgba(48, 48, 48, 0.4);
 @shadowTop: 0 -0.1rem 0.2rem rgba(48, 48, 48, 0.4);
 @borderColor: #888888;
-@popupBlockSize: 48px;
+@popupBlockSize: 12.3vw;
 * {
   margin: 0;
   padding: 0;
@@ -37,7 +37,9 @@ h1, h2 {
 }
 
 .title {
-  padding: 1rem 5%;
+  height: 4.5rem;
+  line-height: 4.5rem;
+  padding: 0 5%;
   background: steelblue;
   color: white;
   margin-bottom: 2rem;
@@ -45,10 +47,11 @@ h1, h2 {
 }
 
 .container {
-  padding-left: 5%;
+  padding: 0 5vw;
 }
 
 .row {
+  display: flex;
   > span {
     cursor: pointer;
     display: inline-block;
@@ -56,9 +59,9 @@ h1, h2 {
     font-size: 16px;
     padding: 0;
     margin: 0;
-    width: 10%;
-    height: 32px;
-    line-height: 32px;
+    flex: 1;
+    height: 10vw;
+    line-height: 10vw;
     border-color: @borderColor;
     border-style: solid;
     border-width: 0;
@@ -151,8 +154,10 @@ h1, h2 {
 .popup-num {
   position: fixed;
   display: inline-block;
-  top: 96px;
-  left: 110px;
+  top: 0;
+  left: 0;
+  margin-top: calc(6.5rem + 1px);
+  margin-left: calc(5vw + 1px);
   box-shadow: @shadow;
   border: 1px solid white;
   color: white;
