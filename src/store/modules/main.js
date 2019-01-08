@@ -10,7 +10,7 @@ const main = {
     title: '数独游戏',
     matrix: myPuzzle, // 生成棋盘数据
     cloneMatrix: deepClone(myPuzzle), // 棋盘原始数据、重置时追溯
-    matrixMarks: makeMatrix(myPuzzle), // 解密结果
+    matrixMarks: makeMatrix(true), // 解密结果
     isSuccess: null, // 是否解密成功
     rowClass: ['row_g_top', 'row_g_middle', 'row_g_bottom'],
     colClass: ['col_g_left', 'col_g_center', 'col_g_right'],

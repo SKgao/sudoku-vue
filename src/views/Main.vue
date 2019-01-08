@@ -72,8 +72,9 @@ export default {
       this.$store.dispatch('handleGame', type)
     },
     clickGrid (i, j) {
+      const shown = [i, j].every(e => this.gridPosition.includes(e))
       this.$store.dispatch('clickGrid', [i, j]).then(() => {
-        this.$store.dispatch('togglePop', true)
+        this.$store.dispatch('togglePop', !shown || 0)
       })
     },
     modifyGrid (val) {

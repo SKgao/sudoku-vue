@@ -1,4 +1,4 @@
-## sudoku-vue （TS版本暂未完成，开发中）
+## sudoku-vue （TS版本暂未完成，开发中）
 vue版本的数独小游戏。
 技术栈采用vue2.5.x + vue-router + vuex
 
@@ -7,7 +7,7 @@ vue版本的数独小游戏。
 
 -----------------------------------
 
-## 安装依赖
+### 安装依赖
 ```
 npm install
 ```
@@ -20,11 +20,6 @@ npm run serve
 ### 线上发布
 ```
 npm run build
-```
-
-### 本地测试
-```
-npm run test
 ```
 
 ### 代码检验
