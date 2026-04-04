@@ -17,7 +17,6 @@
     "noUnusedParameters": false,
     "jsx": "preserve",
     "types": ["vite/client"],
-		"ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
