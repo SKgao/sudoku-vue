@@ -4,13 +4,10 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
+<script setup lang="ts">
+defineProps<{
+  msg: string
+}>()
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

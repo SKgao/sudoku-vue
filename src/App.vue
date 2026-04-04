@@ -1,14 +1,17 @@
 <template>
-  <div id="app">
-    <router-view/>
+  <div
+    class="min-h-screen bg-[radial-gradient(circle_at_top,_#f7fbff,_#eceae3_58%,_#ddd8cc)] antialiased"
+  >
+    <RouterView />
+    <AppToastViewport />
+    <AppAlertDialog />
+    <AppConfirmDialog />
   </div>
 </template>
 
-<style lang="less">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-}
-</style>
+<script setup lang="ts">
+import AppAlertDialog from '@/components/AppAlertDialog.vue'
+import AppConfirmDialog from '@/components/AppConfirmDialog.vue'
+import AppToastViewport from '@/components/AppToastViewport.vue'
+import { RouterView } from 'vue-router'
+</script>
