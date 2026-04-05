@@ -198,7 +198,7 @@ export const useBoardDragSelection = (options: UseBoardDragSelectionOptions = {}
       visitedCells.map(({ rowIndex, colIndex }) => convertToBoxIndex(rowIndex, colIndex).boxIndex)
     )
 
-    // 如果轨迹始终落在同一行，就按这一行的最小列到最大列补成完整连续区间。
+    // 如果轨迹始终落在同一行，就按这一行的小列到最大列补成完整连最续区间。
     if (rowIndexes.size === 1) {
       const [rowIndex] = [...rowIndexes]
       const minColIndex = Math.min(...visitedCells.map(({ colIndex }) => colIndex))
@@ -228,7 +228,7 @@ export const useBoardDragSelection = (options: UseBoardDragSelectionOptions = {}
       }
     }
 
-    // 只要轨迹同时跨行又跨列，就必须保证整条路径都在同一个宫内，否则不视为有效框选。
+    // 只要轨迹同时跨行又跨列，就必须保整条路径都在同一个宫内，否则证不视为有效框选。
     if (boxIndexes.size !== 1) {
       return null
     }

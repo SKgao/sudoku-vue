@@ -3,16 +3,12 @@
     v-model:open="state.open"
   >
     <AlertDialogPortal>
-      <AlertDialogOverlay
-        class="fixed inset-0 z-40 bg-[#243342]/45 backdrop-blur-[6px]"
-      />
+      <AlertDialogOverlay class="dialog-overlay" />
 
       <AlertDialogContent
-        class="fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-[26rem] -translate-x-1/2 -translate-y-1/2 outline-none"
+        class="dialog-position max-w-[26rem]"
       >
-        <div
-          class="overflow-hidden rounded-[1.5rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.97),rgba(246,249,252,0.95))] shadow-[0_1.6rem_4rem_rgba(36,51,66,0.28)] ring-1 ring-white/45"
-        >
+        <div class="dialog-card-alert">
           <div
             class="h-1.5 w-full"
             :class="toneBarClass"
@@ -21,7 +17,7 @@
           <div class="p-6 sm:p-7">
             <div class="mb-4 flex items-center gap-3">
               <span
-                class="rounded-full px-3 py-1 text-[0.72rem] font-semibold tracking-[0.18em] uppercase"
+                class="dialog-badge"
                 :class="toneBadgeClass"
               >
                 {{ toneLabel }}
@@ -41,7 +37,7 @@
 
             <div class="mt-7 flex justify-end">
               <AlertDialogCancel
-                class="inline-flex min-w-[7.5rem] items-center justify-center rounded-[0.95rem] border border-[#243342]/10 bg-[#243342] px-4 py-2.5 text-[0.95rem] font-medium text-white shadow-[0_0.7rem_1.4rem_rgba(36,51,66,0.18)] transition duration-150 hover:bg-[#19242e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#243342]/30 focus-visible:ring-offset-2"
+                class="dialog-primary-button min-w-[7.5rem] border border-[#243342]/10 bg-[#243342] hover:bg-[#19242e] focus-visible:ring-[#243342]/30"
                 @click="close"
               >
                 {{ state.actionText }}

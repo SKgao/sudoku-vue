@@ -1,0 +1,81 @@
+import type { CSSProperties } from 'vue'
+import type { BooleanMatrix, GridPosition, NumberMatrix } from '@/types/sudoku'
+
+interface BoardCellVisualState {
+  rowIndex: number
+  colIndex: number
+  value: number
+  cloneMatrix: NumberMatrix
+  cheatMarks: BooleanMatrix
+  matrixMarks: BooleanMatrix
+  clearErrorMarks: boolean
+  activeValue: number | null
+  gridPosition: GridPosition | null
+}
+
+interface BoardCellStyleState {
+  rowIndex: number
+  colIndex: number
+  gridPosition: GridPosition | null
+  dragBoxShadow?: string
+}
+
+// 这里统一整理棋盘单元格的视觉状态，避免样式判断散落在视图模板里。
+export const getBoardCellClassList = ({
+  rowIndex,
+  colIndex,
+  value,
+  cloneMatrix,
+  cheatMarks,
+  matrixMarks,
+  clearErrorMarks,
+  activeValue,
+  gridPosition
+}: BoardCellVisualState) => {
+  const isFixedCell = cloneMatrix[rowIndex][colIndex]
+  const isSelected = gridPosition?.rowIndex === rowIndex && gridPosition?.colIndex === colIndex
+  const isHighlightedValue = Boolean(value) && activeValue === value
+  const isCheatValue = cheatMarks[rowIndex][colIndex] && value
+  const hasError = (!matrixMarks[rowIndex][colIndex] || !value) && !clearErrorMarks
+
+  return [
+    'board-cell',
+    rowIndex === 0 ? '' : rowIndex % 3 === 0 ? 'board-cell--border-top-strong' : 'board-cell--border-top',
+    colIndex === 0
+      ? ''
+      : colIndex % 3 === 0
+        ? 'board-cell--border-left-strong'
+        : 'board-cell--border-left',
+    rowIndex === 0 && colIndex === 0 ? 'board-cell--corner-tl' : '',
+    rowIndex === 0 && colIndex === 8 ? 'board-cell--corner-tr' : '',
+    rowIndex === 8 && colIndex === 0 ? 'board-cell--corner-bl' : '',
+    rowIndex === 8 && colIndex === 8 ? 'board-cell--corner-br' : '',
+    isFixedCell ? 'board-cell--fixed' : '',
+    isHighlightedValue ? (isFixedCell ? 'board-cell--highlight-fixed' : 'board-cell--highlight-editable') : '',
+    isCheatValue ? 'board-cell--cheat' : '',
+    isSelected ? 'board-cell--selected' : '',
+    !value ? 'board-cell--empty' : '',
+    hasError ? 'board-cell--error' : ''
+  ]
+}
+
+// 边框高亮既包含当前选中格，也包含长按拖拽出来的闭合区域。
+export const getBoardCellStyle = ({
+  rowIndex,
+  colIndex,
+  gridPosition,
+  dragBoxShadow
+}: BoardCellStyleState): CSSProperties | undefined => {
+  const shadows: string[] = []
+  const isFocusedCell = gridPosition?.rowIndex === rowIndex && gridPosition?.colIndex === colIndex
+
+  if (isFocusedCell) {
+    shadows.push('inset 0 0 0 2px #d18c1d')
+  }
+
+  if (dragBoxShadow) {
+    shadows.push(dragBoxShadow)
+  }
+
+  return shadows.length ? { boxShadow: shadows.join(', ') } : undefined
+}

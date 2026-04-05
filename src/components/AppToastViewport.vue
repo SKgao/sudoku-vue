@@ -1,6 +1,6 @@
 <template>
   <ToastProvider>
-    <div class="pointer-events-none fixed inset-x-4 top-4 z-50 mx-auto w-[calc(100vw-2rem)] max-w-[28rem]">
+    <div class="toast-wrapper">
       <ToastViewport class="flex flex-col gap-3 outline-none" />
     </div>
 
@@ -9,7 +9,7 @@
       :key="toast.id"
       :duration="toast.duration"
       :open="toast.open"
-      class="pointer-events-auto relative overflow-hidden rounded-[1.25rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(246,249,252,0.94))] shadow-[0_1rem_2.2rem_rgba(36,51,66,0.18)] ring-1 ring-white/40"
+      class="toast-card"
       @update:open="(open) => syncOpenState(toast.id, open)"
     >
       <div class="absolute inset-y-0 left-0 w-1.5" :class="toneStripClass(toast.tone)" />
@@ -18,7 +18,7 @@
         <div class="min-w-0 flex-1">
           <div class="mb-2 flex items-center gap-2">
             <span
-              class="rounded-full px-2.5 py-1 text-[0.68rem] font-semibold tracking-[0.16em] uppercase"
+              class="toast-badge"
               :class="toneBadgeClass(toast.tone)"
             >
               {{ toneLabel(toast.tone) }}
@@ -38,7 +38,7 @@
         </div>
 
         <ToastClose
-          class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#243342]/8 bg-white/70 text-[#71808f] transition duration-150 hover:bg-white hover:text-[#243342] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#243342]/20"
+          class="toast-close"
           aria-label="关闭提示"
         >
           <Icon type="close" size="14" />

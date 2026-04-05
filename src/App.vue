@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="min-h-screen bg-[radial-gradient(circle_at_top,_#f7fbff,_#eceae3_58%,_#ddd8cc)] antialiased"
-  >
+  <div class="app-bg">
     <RouterView />
     <AppToastViewport />
     <AppAlertDialog />

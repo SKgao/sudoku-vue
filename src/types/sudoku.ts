@@ -18,7 +18,22 @@ export interface ControlButton {
 export interface DifficultyOption {
   key: GameDifficulty
   text: string
-  level: number
+}
+
+export interface GameState {
+  title: string
+  matrix: NumberMatrix
+  cloneMatrix: NumberMatrix
+  solutionMatrix: NumberMatrix
+  cheatMarks: BooleanMatrix
+  matrixMarks: BooleanMatrix
+  isSuccess: boolean | null
+  gridPosition: GridPosition | null
+  activeValue: number | null
+  difficulty: GameDifficulty
+  difficultyOptions: DifficultyOption[]
+  clearErrorMarks: boolean
+  buttons: ControlButton[]
 }
 
 export interface BoxPosition {

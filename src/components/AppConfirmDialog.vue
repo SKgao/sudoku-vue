@@ -1,20 +1,18 @@
 <template>
   <AlertDialogRoot v-model:open="state.open">
     <AlertDialogPortal>
-      <AlertDialogOverlay class="fixed inset-0 z-40 bg-[#243342]/40 backdrop-blur-[5px]" />
+      <AlertDialogOverlay class="dialog-overlay-soft" />
 
       <AlertDialogContent
-        class="fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-[28rem] -translate-x-1/2 -translate-y-1/2 outline-none"
+        class="dialog-position max-w-[28rem]"
       >
-        <div
-          class="overflow-hidden rounded-[1.5rem] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(246,249,252,0.96))] shadow-[0_1.6rem_4rem_rgba(36,51,66,0.26)] ring-1 ring-white/45"
-        >
+        <div class="dialog-card-confirm">
           <div class="h-1.5 w-full" :class="toneBarClass" />
 
           <div class="p-6 sm:p-7">
             <div class="mb-4 flex items-center gap-3">
               <span
-                class="rounded-full px-3 py-1 text-[0.72rem] font-semibold tracking-[0.18em] uppercase"
+                class="dialog-badge"
                 :class="toneBadgeClass"
               >
                 {{ toneLabel }}
@@ -34,14 +32,14 @@
 
             <div class="mt-7 flex justify-end gap-3">
               <AlertDialogCancel
-                class="inline-flex min-w-[6.5rem] items-center justify-center rounded-[0.95rem] border border-[#243342]/10 bg-white px-4 py-2.5 text-[0.95rem] font-medium text-[#243342] shadow-[0_0.4rem_1rem_rgba(36,51,66,0.08)] transition duration-150 hover:bg-[#f5f8fb] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#243342]/20 focus-visible:ring-offset-2"
+                class="dialog-secondary-button min-w-[6.5rem]"
                 @click="close"
               >
                 {{ state.cancelText }}
               </AlertDialogCancel>
 
               <AlertDialogAction
-                class="inline-flex min-w-[7rem] items-center justify-center rounded-[0.95rem] px-4 py-2.5 text-[0.95rem] font-medium text-white shadow-[0_0.7rem_1.4rem_rgba(36,51,66,0.18)] transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                class="dialog-primary-button min-w-[7rem]"
                 :class="actionButtonClass"
                 @click="confirm"
               >
