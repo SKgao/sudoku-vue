@@ -19,10 +19,6 @@
               >
                 {{ toneLabel }}
               </span>
-
-              <span class="text-[0.72rem] tracking-[0.2em] text-[#6e7c89] uppercase">
-                Action Guard
-              </span>
             </div>
 
             <AlertDialogTitle class="text-[1.55rem] leading-tight font-semibold text-[#1d2a36]">
