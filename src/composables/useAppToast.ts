@@ -37,7 +37,7 @@ const show = (options: AppToastOptions) => {
     title: options.title,
     description: options.description ?? '',
     tone: options.tone ?? 'info',
-    duration: options.duration ?? 3200
+    duration: options.duration ?? 1200
   }
 
   nextToastId += 1

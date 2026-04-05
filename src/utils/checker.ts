@@ -6,6 +6,7 @@ const {
   boxToolkit: { convertFromBoxIndex, getBoxCells }
 } = toolkit
 
+// 返回一组布尔标记，false 表示该位置为空或与同组中的其他数字重复。
 const checkArray = (array: number[]): boolean[] => {
   const length = array.length
   const maskArray = new Array<boolean>(length).fill(true)
@@ -32,7 +33,9 @@ const checkArray = (array: number[]): boolean[] => {
 }
 
 class Checker {
+  // 保存当前待校验的棋盘。
   private _matrix: NumberMatrix
+  // 与棋盘同尺寸的标记矩阵，true 表示该格当前校验通过。
   private _matrixMarks: BooleanMatrix
   private _success = false
 
@@ -49,6 +52,7 @@ class Checker {
     return this._success
   }
 
+  // 分别校验行、列、宫，最后汇总出整局是否成功。
   checkAll(): void {
     this.checkRows()
     this.checkCols()

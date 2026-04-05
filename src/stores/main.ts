@@ -2,10 +2,11 @@ import { defineStore } from 'pinia'
 import type {
   BooleanMatrix,
   ControlButton,
+  DifficultyOption,
   GameActionType,
+  GameDifficulty,
   GridPosition,
-  NumberMatrix,
-  PopupMatrix
+  NumberMatrix
 } from '@/types/sudoku'
 import { useAppAlertDialog } from '@/composables/useAppAlertDialog'
 import { useAppConfirmDialog } from '@/composables/useAppConfirmDialog'
@@ -21,6 +22,15 @@ const { show: showAlert } = useAppAlertDialog()
 const { show: showConfirm } = useAppConfirmDialog()
 const { show: showToast } = useAppToast()
 
+const difficultyOptions: DifficultyOption[] = [
+  { key: 'easy', text: '简单', level: 4 },
+  { key: 'medium', text: '中等', level: 5 },
+  { key: 'hard', text: '困难', level: 6 }
+]
+
+const getDifficultyConfig = (difficulty: GameDifficulty) =>
+  difficultyOptions.find((option) => option.key === difficulty) ?? difficultyOptions[1]
+
 interface GameState {
   title: string
   matrix: NumberMatrix
@@ -29,15 +39,17 @@ interface GameState {
   cheatMarks: BooleanMatrix
   matrixMarks: BooleanMatrix
   isSuccess: boolean | null
-  popShow: boolean
-  gridPosition: GridPosition
+  gridPosition: GridPosition | null
+  activeValue: number | null
+  difficulty: GameDifficulty
+  difficultyOptions: DifficultyOption[]
   clearErrorMarks: boolean
   buttons: ControlButton[]
-  popupNumbers: PopupMatrix
 }
 
-const createGameState = (): GameState => {
-  const { puzzle, solution } = createPuzzleBundle()
+const createGameState = (difficulty: GameDifficulty = 'medium'): GameState => {
+  const difficultyConfig = getDifficultyConfig(difficulty)
+  const { puzzle, solution } = createPuzzleBundle(difficultyConfig.level)
 
   return {
     title: '数独游戏',
@@ -47,21 +59,16 @@ const createGameState = (): GameState => {
     cheatMarks: makeMatrix(false),
     matrixMarks: makeMatrix(true),
     isSuccess: null,
-    popShow: false,
-    gridPosition: [0, 0],
+    gridPosition: null,
+    activeValue: null,
+    difficulty,
+    difficultyOptions,
     clearErrorMarks: true,
     buttons: [
-      { key: 'check', text: '检查', variant: 'neutral' },
       { key: 'submit', text: '提交', variant: 'primary' },
       { key: 'cheat', text: '作弊', variant: 'warning' },
       { key: 'reset', text: '重置', variant: 'warning' },
-      { key: 'clear', text: '清理', variant: 'subtle' },
       { key: 'rebuild', text: '重建', variant: 'danger' }
-    ],
-    popupNumbers: [
-      [1, 2, 3],
-      [4, 5, 6],
-      [7, 8, 9]
     ]
   }
 }
@@ -69,55 +76,44 @@ const createGameState = (): GameState => {
 export const useMainStore = defineStore('main', {
   state: createGameState,
   actions: {
-    togglePop(isShow?: boolean) {
-      this.popShow = typeof isShow === 'boolean' ? isShow : !this.popShow
+    clickGrid(gridPosition: GridPosition | null) {
+      this.gridPosition = gridPosition ? { ...gridPosition } : null
     },
-    clickGrid(gridPosition: GridPosition) {
-      this.gridPosition = [...gridPosition] as GridPosition
+    setActiveValue(value: number | null) {
+      this.activeValue = value || null
     },
     modifyGrid(num: number) {
-      const [rowIndex, colIndex] = this.gridPosition
+      if (!this.gridPosition) {
+        return
+      }
+
+      const { rowIndex, colIndex } = this.gridPosition
       this.matrix[rowIndex][colIndex] = num
       this.cheatMarks[rowIndex][colIndex] = false
+      this.activeValue = num || null
     },
     clearCurrentGrid() {
-      const [rowIndex, colIndex] = this.gridPosition
+      if (!this.gridPosition) {
+        return
+      }
+
+      const { rowIndex, colIndex } = this.gridPosition
       this.matrix[rowIndex][colIndex] = 0
       this.cheatMarks[rowIndex][colIndex] = false
+      this.activeValue = null
     },
     cheatCurrentGrid() {
-      const [rowIndex, colIndex] = this.gridPosition
+      if (!this.gridPosition) {
+        return
+      }
+
+      const { rowIndex, colIndex } = this.gridPosition
       this.matrix[rowIndex][colIndex] = this.solutionMatrix[rowIndex][colIndex]
       this.cheatMarks[rowIndex][colIndex] = true
       this.clearErrorMarks = true
       this.matrixMarks = makeMatrix(true)
       this.isSuccess = null
-    },
-    checkGame() {
-      const checker = new Checker(this.matrix)
-      checker.checkAll()
-
-      this.isSuccess = checker.isSuccess()
-      this.clearErrorMarks = false
-      this.matrixMarks = checker.matrixMarks()
-
-      if (this.isSuccess) {
-        showToast({
-          title: '验证成功',
-          description: '当前数独已经全部填写正确。',
-          tone: 'success'
-        })
-        return
-      }
-
-      const invalidCount = this.matrixMarks.flat().filter((mark) => !mark).length
-
-      showToast({
-        title: '发现待修正项',
-        description: `已标出 ${invalidCount} 个问题位置，请继续检查。`,
-        tone: 'error',
-        duration: 3800
-      })
+      this.activeValue = this.matrix[rowIndex][colIndex]
     },
     submitGame() {
       const checker = new Checker(this.matrix)
@@ -128,10 +124,13 @@ export const useMainStore = defineStore('main', {
       this.matrixMarks = checker.matrixMarks()
 
       if (this.isSuccess) {
-        showAlert({
-          title: '提交成功',
-          description: '数独已完成，所有数字均已通过校验。',
-          tone: 'success'
+        showConfirm({
+          title: '恭喜你完成本局游戏',
+          description: '当前数独已经全部填写正确。要不要立刻再来一局？',
+          tone: 'info',
+          confirmText: '再来一局',
+          cancelText: '取消',
+          onConfirm: () => this.applyRebuildGame()
         })
         return
       }
@@ -148,8 +147,8 @@ export const useMainStore = defineStore('main', {
       this.matrixMarks = makeMatrix(true)
       this.clearErrorMarks = true
       this.isSuccess = null
-      this.popShow = false
-      this.gridPosition = [0, 0]
+      this.gridPosition = null
+      this.activeValue = null
       showToast({
         title: '棋盘已重置',
         description: '已恢复到本局初始题面。',
@@ -164,15 +163,6 @@ export const useMainStore = defineStore('main', {
         confirmText: '确认重置',
         cancelText: '继续作答',
         onConfirm: () => this.applyResetGame()
-      })
-    },
-    clearGame() {
-      this.clearErrorMarks = true
-      this.matrixMarks = makeMatrix(true)
-      showToast({
-        title: '已清理标记',
-        description: '错误高亮已隐藏，当前填写内容保持不变。',
-        tone: 'info'
       })
     },
     applyCheatGame() {
@@ -208,7 +198,8 @@ export const useMainStore = defineStore('main', {
       this.matrixMarks = makeMatrix(true)
       this.clearErrorMarks = true
       this.isSuccess = null
-      this.popShow = false
+      this.gridPosition = null
+      this.activeValue = null
 
       showToast({
         title: '作弊完成',
@@ -226,11 +217,39 @@ export const useMainStore = defineStore('main', {
         onConfirm: () => this.applyCheatGame()
       })
     },
+    applyDifficultyChange(difficulty: GameDifficulty) {
+      Object.assign(this, createGameState(difficulty))
+      const difficultyConfig = getDifficultyConfig(difficulty)
+
+      showToast({
+        title: `难度已切换为${difficultyConfig.text}`,
+        description: '已根据新的难度重新生成棋盘。',
+        tone: 'success'
+      })
+    },
+    changeDifficulty(difficulty: GameDifficulty) {
+      if (this.difficulty === difficulty) {
+        return
+      }
+
+      const difficultyConfig = getDifficultyConfig(difficulty)
+
+      showConfirm({
+        title: `切换到${difficultyConfig.text}难度？`,
+        description: '当前棋盘进度将被放弃，并立即生成对应难度的新题目。',
+        tone: 'warning',
+        confirmText: `切换到${difficultyConfig.text}`,
+        cancelText: '保留当前局',
+        onConfirm: () => this.applyDifficultyChange(difficulty)
+      })
+    },
     applyRebuildGame() {
-      Object.assign(this, createGameState())
+      Object.assign(this, createGameState(this.difficulty))
+      const difficultyConfig = getDifficultyConfig(this.difficulty)
+
       showToast({
         title: '新棋盘已生成',
-        description: '已经开始一局新的数独。',
+        description: `已经开始一局新的${difficultyConfig.text}难度数独。`,
         tone: 'success'
       })
     },
@@ -246,11 +265,9 @@ export const useMainStore = defineStore('main', {
     },
     handleGame(type: GameActionType) {
       const actions: Record<GameActionType, () => void> = {
-        check: () => this.checkGame(),
         submit: () => this.submitGame(),
         cheat: () => this.cheatGame(),
         reset: () => this.resetGame(),
-        clear: () => this.clearGame(),
         rebuild: () => this.rebuildGame()
       }
 

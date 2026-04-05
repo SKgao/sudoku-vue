@@ -6,8 +6,10 @@ const {
 } = toolkit
 
 class Generator {
+  // 最终生成出来的完整答案盘面。
   private matrix: NumberMatrix = makeMatrix(0)
   private len = 0
+  // 每一行都维护一个独立的随机列顺序，减少生成结果过于固定。
   private orders: number[][] = []
 
   init(): NumberMatrix {
@@ -18,6 +20,7 @@ class Generator {
     return this.matrix
   }
 
+  // 先重置棋盘，再按 1-9 依次尝试填满整个盘面。
   private generate(): boolean {
     this.matrix = makeMatrix(0)
     this.len = this.matrix.length
@@ -34,6 +37,7 @@ class Generator {
     return this.fillRow(value, 0)
   }
 
+  // 递归地把同一个数字填进每一行；一旦后续失败，就回溯重试当前位置。
   private fillRow(value: number, rowIndex: number): boolean {
     if (rowIndex >= this.len) {
       return true
@@ -72,6 +76,7 @@ export interface PuzzleBundle {
   solution: NumberMatrix
 }
 
+// 先生成完整答案，再按难度随机挖空，得到题面。
 export const createPuzzleBundle = (level = 5): PuzzleBundle => {
   const solution = new Generator().init()
   const puzzle = solution.map((row) => row.map((cell) => (Math.random() * 9 < level ? 0 : cell)))

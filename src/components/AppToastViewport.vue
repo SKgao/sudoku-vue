@@ -23,10 +23,6 @@
             >
               {{ toneLabel(toast.tone) }}
             </span>
-
-            <span class="text-[0.68rem] tracking-[0.18em] text-[#6e7c89] uppercase">
-              Live Update
-            </span>
           </div>
 
           <ToastTitle class="text-[1rem] leading-6 font-semibold text-[#1f2d39]">
@@ -42,10 +38,10 @@
         </div>
 
         <ToastClose
-          class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#243342]/8 bg-white/70 text-[1rem] leading-none text-[#71808f] transition duration-150 hover:bg-white hover:text-[#243342] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#243342]/20"
+          class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#243342]/8 bg-white/70 text-[#71808f] transition duration-150 hover:bg-white hover:text-[#243342] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#243342]/20"
           aria-label="关闭提示"
         >
-          ×
+          <Icon type="close" size="14" />
         </ToastClose>
       </div>
     </ToastRoot>
@@ -61,6 +57,7 @@ import {
   ToastTitle,
   ToastViewport
 } from 'reka-ui'
+import Icon from '@/components/Icon.vue'
 import type { AppToastTone } from '@/composables/useAppToast'
 import { useAppToast } from '@/composables/useAppToast'
 
