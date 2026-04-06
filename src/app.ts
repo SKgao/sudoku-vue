@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import './app.css'
+import './app.scss'
 
 const app = createApp({
   onShow() {

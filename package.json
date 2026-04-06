@@ -28,6 +28,7 @@
     "@vue/babel-plugin-jsx": "^2.0.1",
     "@vue/compiler-sfc": "^3.5.32",
     "babel-preset-taro": "^4.1.11",
+    "sass": "^1.99.0",
     "typescript": "^6.0.2",
     "vitest": "^4.1.2",
     "vue-loader": "^17.4.2",

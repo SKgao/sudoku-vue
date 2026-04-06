@@ -1,18 +1,17 @@
 <template>
-  <view class="page-shell">
-    <view class="page-header">
-      <text class="page-title">{{ title }}</text>
+  <view :class="styles['page-shell']">
+    <view :class="styles['page-header']">
+      <text :class="styles['page-title']">{{ title }}</text>
     </view>
 
-    <view class="page-card">
-      <view class="difficulty-bar">
-        <text class="difficulty-label">游戏难度</text>
-        <view class="difficulty-options">
+    <view :class="styles['page-card']">
+      <view :class="styles['difficulty-bar']">
+        <text :class="styles['difficulty-label']">游戏难度</text>
+        <view :class="styles['difficulty-options']">
           <view
             v-for="option in difficultyOptions"
             :key="option.key"
-            class="difficulty-chip"
-            :class="{ 'difficulty-chip--active': option.key === difficulty }"
+            :class="difficultyChipClass(option.key)"
             @tap="handleDifficultyChange(option.key)"
           >
             {{ option.text }}
@@ -20,21 +19,25 @@
         </view>
       </view>
 
-      <view class="board-shell">
+      <view :class="styles['board-shell']">
         <view
           id="sudoku-board"
-          class="board-inner"
+          :class="styles['board-inner']"
+          @touchmove.stop.prevent="handleBoardTouchMove"
+          @touchend="handleBoardTouchFinish"
+          @touchcancel="handleBoardTouchFinish"
         >
           <view
             v-for="(row, rowIndex) in matrix"
             :key="rowIndex"
-            class="board-row"
+            :class="styles['board-row']"
           >
             <view
               v-for="(cell, colIndex) in row"
               :key="`${rowIndex}-${colIndex}`"
               :class="boardCellClass(rowIndex, colIndex, cell)"
               :style="boardCellStyle(rowIndex, colIndex)"
+              @touchstart="handleCellTouchStart(rowIndex, colIndex)"
               @tap="handleGridTap(rowIndex, colIndex)"
             >
               {{ cell || '' }}
@@ -43,36 +46,30 @@
         </view>
       </view>
 
-      <view class="input-panel">
-        <text class="selection-label">{{ selectionLabel }}</text>
-        <text class="selection-tip">{{ selectionTip }}</text>
+      <view :class="styles['input-panel']">
+        <text :class="styles['selection-label']">{{ selectionLabel }}</text>
+        <text :class="styles['selection-tip']">{{ selectionTip }}</text>
 
-        <view class="keypad-row">
+        <view :class="styles['keypad-row']">
           <view
             v-for="value in keypadNumbers"
             :key="value"
-            class="keypad-button"
-            :class="{
-              'keypad-button--disabled': !gridPosition && activeValue !== value,
-              'keypad-button--active': activeValue === value
-            }"
+            :class="keypadButtonClass(value)"
             @tap="handleInput(value)"
           >
             {{ value }}
           </view>
         </view>
 
-        <view class="quick-actions">
+        <view :class="styles['quick-actions']">
           <view
-            class="quick-action-button quick-action-button--neutral"
-            :class="{ 'quick-action-button--disabled': !gridPosition && !activeValue }"
+            :class="quickActionButtonClass('neutral', !gridPosition && !activeValue)"
             @tap="handleClear"
           >
             撤销
           </view>
           <view
-            class="quick-action-button quick-action-button--hint"
-            :class="{ 'quick-action-button--disabled': !gridPosition }"
+            :class="quickActionButtonClass('hint', !gridPosition)"
             @tap="handleHint"
           >
             提示
@@ -81,13 +78,12 @@
       </view>
     </view>
 
-    <view class="page-footer">
-      <view class="action-grid">
+    <view :class="styles['page-footer']">
+      <view :class="styles['action-grid']">
         <view
           v-for="item in buttons"
           :key="item.key"
-          class="action-button"
-          :class="`action-button--${item.variant}`"
+          :class="actionButtonClass(item.variant)"
           @tap="handleGameAction(item.key)"
         >
           {{ item.text }}
@@ -103,10 +99,23 @@ import { storeToRefs } from 'pinia'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { useMainStore } from '@/stores/main'
 import { getBoardCellClassList, getBoardCellStyle } from './board-cell'
+import { useBoardDragSelection } from './useBoardDragSelection'
+import styles from './index.module.scss'
 
 const keypadNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 const store = useMainStore()
 const boardCellSize = ref(0)
+const {
+  clearDragSelection,
+  consumeSuppressedTap,
+  getDragBoxShadow,
+  handleBoardTouchMove: updateBoardDragSelection,
+  handleCellTouchStart,
+  handleTouchFinish,
+  syncBoardRect
+} = useBoardDragSelection({
+  onLongPressStart: () => store.clickGrid(null)
+})
 
 const {
   title,
@@ -151,15 +160,45 @@ const boardCellClass = (rowIndex, colIndex, value) =>
     matrixMarks: matrixMarks.value,
     clearErrorMarks: clearErrorMarks.value,
     activeValue: activeValue.value,
-    gridPosition: gridPosition.value
+    gridPosition: gridPosition.value,
+    styles
   }).join(' ')
+
+const joinClasses = (...classNames) => classNames.filter(Boolean).join(' ')
+
+const difficultyChipClass = (optionKey) =>
+  joinClasses(
+    styles['difficulty-chip'],
+    optionKey === difficulty.value ? styles['difficulty-chip--active'] : ''
+  )
+
+const keypadButtonClass = (value) =>
+  joinClasses(
+    styles['keypad-button'],
+    !gridPosition.value && activeValue.value !== value ? styles['keypad-button--disabled'] : '',
+    activeValue.value === value ? styles['keypad-button--active'] : ''
+  )
+
+const quickActionButtonClass = (tone, disabled) =>
+  joinClasses(
+    styles['quick-action-button'],
+    styles[`quick-action-button--${tone}`],
+    disabled ? styles['quick-action-button--disabled'] : ''
+  )
+
+const actionButtonClass = (variant) =>
+  joinClasses(
+    styles['action-button'],
+    styles[`action-button--${variant}`]
+  )
 
 const boardCellStyle = (rowIndex, colIndex) =>
   ({
     ...getBoardCellStyle({
       rowIndex,
       colIndex,
-      gridPosition: gridPosition.value
+      gridPosition: gridPosition.value,
+      dragBoxShadow: getDragBoxShadow(rowIndex, colIndex)
     }),
     width: boardCellSize.value ? `${boardCellSize.value}px` : '11.111111%',
     height: boardCellSize.value ? `${boardCellSize.value}px` : '11.111111vw'
@@ -173,10 +212,16 @@ const syncBoardCellSize = () => {
     const rect = result?.[0]
 
     if (!rect?.width) {
+      syncBoardRect(null)
       return
     }
 
     boardCellSize.value = rect.width / 9
+    syncBoardRect({
+      left: rect.left,
+      top: rect.top,
+      width: rect.width
+    })
   })
 }
 
@@ -195,6 +240,11 @@ useDidShow(() => {
 })
 
 const handleGridTap = (rowIndex, colIndex) => {
+  if (consumeSuppressedTap()) {
+    return
+  }
+
+  clearDragSelection()
   const value = matrix.value[rowIndex][colIndex]
   const isHighlightedValue = Boolean(value) && activeValue.value === value
 
@@ -213,11 +263,29 @@ const handleGridTap = (rowIndex, colIndex) => {
 }
 
 const handleDifficultyChange = (nextDifficulty) => {
+  clearDragSelection()
   void store.changeDifficulty(nextDifficulty)
 }
 
 const handleGameAction = (type) => {
+  clearDragSelection()
   void store.handleGame(type)
+}
+
+const extractTouchPoint = (event) => event?.touches?.[0] ?? event?.changedTouches?.[0] ?? null
+
+const handleBoardTouchMove = (event) => {
+  const touchPoint = extractTouchPoint(event)
+
+  if (!touchPoint) {
+    return
+  }
+
+  updateBoardDragSelection(touchPoint.pageX, touchPoint.pageY)
+}
+
+const handleBoardTouchFinish = () => {
+  handleTouchFinish()
 }
 
 const handleInput = (value) => {
@@ -248,5 +316,3 @@ const handleHint = () => {
   store.cheatCurrentGrid()
 }
 </script>
-
-<style src="./index.css"></style>

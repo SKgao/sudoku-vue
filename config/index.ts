@@ -27,7 +27,7 @@ export default defineConfig<'webpack5'>({
         }
       },
       cssModules: {
-        enable: false,
+        enable: true,
         config: {
           namingPattern: 'module',
           generateScopedName: '[name]__[local]___[hash:base64:5]'

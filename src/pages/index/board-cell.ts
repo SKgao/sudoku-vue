@@ -1,6 +1,10 @@
 import type { CSSProperties } from 'vue'
 import type { BooleanMatrix, GridPosition, NumberMatrix } from '@/types/sudoku'
 
+export interface CssModuleClasses {
+  [className: string]: string
+}
+
 interface BoardCellVisualState {
   rowIndex: number
   colIndex: number
@@ -11,6 +15,7 @@ interface BoardCellVisualState {
   clearErrorMarks: boolean
   activeValue: number | null
   gridPosition: GridPosition | null
+  styles: CssModuleClasses
 }
 
 interface BoardCellStyleState {
@@ -29,7 +34,8 @@ export const getBoardCellClassList = ({
   matrixMarks,
   clearErrorMarks,
   activeValue,
-  gridPosition
+  gridPosition,
+  styles
 }: BoardCellVisualState) => {
   const isFixedCell = cloneMatrix[rowIndex][colIndex]
   const isSelected = gridPosition?.rowIndex === rowIndex && gridPosition?.colIndex === colIndex
@@ -55,7 +61,7 @@ export const getBoardCellClassList = ({
     isSelected ? 'board-cell--selected' : '',
     !value ? 'board-cell--empty' : '',
     hasError ? 'board-cell--error' : ''
-  ]
+  ].filter(Boolean).map((className) => styles[className] ?? className)
 }
 
 export const getBoardCellStyle = ({
