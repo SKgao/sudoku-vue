@@ -3,31 +3,34 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "serve": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "typecheck": "vue-tsc --noEmit",
+    "dev": "taro build --type weapp --watch",
+    "build": "taro build --type weapp",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@tarojs/components": "^4.1.11",
+    "@tarojs/runtime": "^4.1.11",
+    "@tarojs/shared": "^4.1.11",
+    "@tarojs/taro": "^4.1.11",
     "pinia": "^3.0.4",
-    "reka-ui": "^2.9.3",
-    "vue": "^3.5.32",
-    "vue-router": "^4.6.4"
+    "vue": "^3.5.32"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-typescript": "^7.28.5",
     "@types/node": "^22.19.17",
-    "@unocss/reset": "^66.6.7",
-    "@vitejs/plugin-vue": "^6.0.5",
+    "@tarojs/cli": "^4.1.11",
+    "@tarojs/plugin-framework-vue3": "^4.1.11",
+    "@tarojs/plugin-platform-weapp": "^4.1.11",
+    "@tarojs/webpack5-runner": "^4.1.11",
+    "@vue/babel-plugin-jsx": "^2.0.1",
     "@vue/compiler-sfc": "^3.5.32",
-    "fast-glob": "^3.3.3",
+    "babel-preset-taro": "^4.1.11",
     "typescript": "^6.0.2",
-    "unocss": "^66.6.7",
-    "vite": "^8.0.3",
-    "vite-plugin-svg-icons": "^2.0.1",
     "vitest": "^4.1.2",
-    "vue-tsc": "^3.2.6"
+    "vue-loader": "^17.4.2",
+    "webpack": "^5.105.4"
   }
 }

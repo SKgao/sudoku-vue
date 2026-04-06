@@ -1,0 +1,13 @@
+page {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top, rgba(255, 245, 221, 0.88), transparent 42%),
+    linear-gradient(180deg, #f4efe2 0%, #e3dccb 100%);
+  color: #213547;
+  font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+}
+
+view,
+text {
+  box-sizing: border-box;
+}

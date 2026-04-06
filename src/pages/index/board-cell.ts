@@ -20,7 +20,6 @@ interface BoardCellStyleState {
   dragBoxShadow?: string
 }
 
-// 这里统一整理棋盘单元格的视觉状态，避免样式判断散落在视图模板里。
 export const getBoardCellClassList = ({
   rowIndex,
   colIndex,
@@ -59,7 +58,6 @@ export const getBoardCellClassList = ({
   ]
 }
 
-// 边框高亮既包含当前选中格，也包含长按拖拽出来的闭合区域。
 export const getBoardCellStyle = ({
   rowIndex,
   colIndex,

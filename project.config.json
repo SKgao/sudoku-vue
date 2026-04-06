@@ -1,0 +1,32 @@
+{
+  "appid": "wx20a94f8352cd9757",
+  "projectname": "sudoku-vue",
+  "compileType": "miniprogram",
+  "srcMiniprogramRoot": "dist/",
+  "miniprogramRoot": "dist/",
+  "simulatorType": "wechat",
+  "packNpmRelationList": [],
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "condition": {},
+  "libVersion": "3.15.1",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  },
+  "simulatorPluginLibVersion": {}
+}

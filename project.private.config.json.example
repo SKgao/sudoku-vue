@@ -1,0 +1,7 @@
+{
+  "projectname": "sudoku-vue",
+  "appid": "wx20a94f8352cd9757",
+  "setting": {
+    "compileHotReLoad": true
+  }
+}
