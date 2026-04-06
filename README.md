@@ -16,8 +16,9 @@
 - 题面生成与校验
 - 难度切换
 - 单格填写、清空、提示
-- 提交校验、重置、重开
-- 微信小程序原生 Toast / Modal 反馈
+- 提交校验、清空、重开
+- 长按拖拽框选高亮
+- 自定义扁平化 Toast / Modal 反馈层
 
 ## 推荐环境
 
@@ -61,8 +62,7 @@ npm run test
 1. 先执行 `npm run build` 或 `npm run dev`
 2. 使用微信开发者工具导入 `dist/` 目录
 3. 项目类型选择“小程序”，不要选“小游戏”
-4. 当前 AppID 已配置在 [project.config.json](/Users/gaosikang/Desktop/work/typescript/sudoku-vue/project.config.json) 中：
-   `wx20a94f8352cd9757`
+4. 如需替换发布 AppID，可直接修改 [project.config.json](/Users/gaosikang/Desktop/work/typescript/sudoku-vue/project.config.json) 中的 `appid`
 5. 如果只想保留本地私有配置，可参考 [project.private.config.json.example](/Users/gaosikang/Desktop/work/typescript/sudoku-vue/project.private.config.json.example)
 
 说明：
@@ -74,9 +74,9 @@ npm run test
 
 ## 已知注意事项
 
-- 微信小程序 `showModal` 的 `confirmText` 和 `cancelText` 最多支持 4 个中文字符；项目里已经做了统一截断兜底。
 - 微信开发者工具内置的 TypeScript 检查和 Taro 实际构建链不完全一致；如果看到编辑器级别的旧 TS 警告，优先以 `npm run typecheck` 和 `npm run build` 结果为准。
 - 当前页面布局已针对微信小程序做了兼容处理，棋盘单元格尺寸通过运行时测量同步，避免出现 9 宫格错位。
+- 当前样式维护方案为 `SCSS + CSS Modules`，页面全局样式在 [src/app.scss](/Users/gaosikang/Desktop/work/typescript/sudoku-vue/src/app.scss)，页面私有样式在对应的 `*.module.scss`
 
 ## 项目结构
 
