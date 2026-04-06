@@ -4,7 +4,6 @@ import { showAppAlert, showAppConfirm, showAppToast } from '@/services/feedback'
 import {
   createActiveValuePatch,
   createCheatCurrentGridPatch,
-  createCheatGameResult,
   createClearCurrentGridPatch,
   createGameState,
   createGridSelectionPatch,
@@ -13,6 +12,12 @@ import {
   createSubmitResult,
   getDifficultyOption
 } from '@/utils/game-state'
+
+const isBoardFilled = (matrix: GameState['matrix']) => matrix.every((row) => row.every(Boolean))
+const hasEditableProgress = (state: Pick<GameState, 'matrix' | 'cloneMatrix'>) =>
+  state.matrix.some((row, rowIndex) =>
+    row.some((cell, colIndex) => !state.cloneMatrix[rowIndex][colIndex] && Boolean(cell))
+  )
 
 const applyStatePatch = (store: GameState, patch: Partial<GameState> | null) => {
   if (!patch) {
@@ -33,13 +38,21 @@ export const useMainStore = defineStore('main', {
       applyStatePatch(this, createActiveValuePatch(value))
     },
     modifyGrid(num: number) {
-      applyStatePatch(this, createModifyGridPatch(this, num))
+      const hasPatched = applyStatePatch(this, createModifyGridPatch(this, num))
+
+      if (hasPatched && isBoardFilled(this.matrix)) {
+        void this.submitGame()
+      }
     },
     clearCurrentGrid() {
       applyStatePatch(this, createClearCurrentGridPatch(this))
     },
     cheatCurrentGrid() {
-      applyStatePatch(this, createCheatCurrentGridPatch(this))
+      const hasPatched = applyStatePatch(this, createCheatCurrentGridPatch(this))
+
+      if (hasPatched && isBoardFilled(this.matrix)) {
+        void this.submitGame()
+      }
     },
     async submitGame() {
       const submitResult = createSubmitResult(this.matrix)
@@ -70,55 +83,22 @@ export const useMainStore = defineStore('main', {
     applyResetGame() {
       applyStatePatch(this, createResetGamePatch(this))
       void showAppToast({
-        title: '棋盘已重置',
+        title: '棋盘已清空',
         description: '已恢复到本局初始题面。',
         tone: 'info'
       })
     },
     async resetGame() {
       const confirmed = await showAppConfirm({
-        title: '确认重置当前棋盘？',
+        title: '确认清空当前棋盘？',
         description: '已填写的数字会被清空，并恢复到本局最初的题面。',
         tone: 'warning',
-        confirmText: '确认重置',
+        confirmText: '确认清空',
         cancelText: '继续作答'
       })
 
       if (confirmed) {
         this.applyResetGame()
-      }
-    },
-    applyCheatGame() {
-      const { emptyCells, statePatch } = createCheatGameResult(this)
-
-      if (!emptyCells || !statePatch) {
-        void showAppToast({
-          title: '当前没有可代填空位',
-          description: '所有可填写格都已有数字，作弊不会再补入新答案。',
-          tone: 'info'
-        })
-        return
-      }
-
-      applyStatePatch(this, statePatch)
-
-      void showAppToast({
-        title: '作弊完成',
-        description: `已为 ${emptyCells} 个未完成格子填入正确答案，代填数字会以红色显示。`,
-        tone: 'success'
-      })
-    },
-    async cheatGame() {
-      const confirmed = await showAppConfirm({
-        title: '确认启用作弊？',
-        description: '系统会把所有未完成区域直接填入正确答案，当前挑战将失去意义。',
-        tone: 'danger',
-        confirmText: '确认作弊',
-        cancelText: '继续作答'
-      })
-
-      if (confirmed) {
-        this.applyCheatGame()
       }
     },
     applyDifficultyChange(difficulty: GameDifficulty) {
@@ -131,6 +111,11 @@ export const useMainStore = defineStore('main', {
     },
     async changeDifficulty(difficulty: GameDifficulty) {
       if (this.difficulty === difficulty) {
+        return
+      }
+
+      if (!hasEditableProgress(this)) {
+        this.applyDifficultyChange(difficulty)
         return
       }
 
@@ -159,6 +144,11 @@ export const useMainStore = defineStore('main', {
       })
     },
     async rebuildGame() {
+      if (!hasEditableProgress(this)) {
+        this.applyRebuildGame()
+        return
+      }
+
       const confirmed = await showAppConfirm({
         title: '确认开始新的一局？',
         description: '当前棋盘进度将被放弃，并立即生成新的题目。',
@@ -174,7 +164,6 @@ export const useMainStore = defineStore('main', {
     async handleGame(type: GameActionType) {
       const actions: Record<GameActionType, () => Promise<void>> = {
         submit: async () => this.submitGame(),
-        cheat: async () => this.cheatGame(),
         reset: async () => this.resetGame(),
         rebuild: async () => this.rebuildGame()
       }

@@ -12,7 +12,7 @@ export default defineConfig<'webpack5'>({
     type: 'webpack5'
   },
   cache: {
-    enable: false
+    enable: true
   },
   mini: {
     postcss: {

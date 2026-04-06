@@ -1,7 +1,7 @@
 export default defineAppConfig({
   pages: ['pages/index/index'],
   window: {
-    navigationBarTitleText: '数独游戏',
+    navigationBarTitleText: '凹凹数独',
     navigationBarBackgroundColor: '#f4efe2',
     navigationBarTextStyle: 'black',
     backgroundTextStyle: 'light',

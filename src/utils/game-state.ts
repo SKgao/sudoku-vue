@@ -13,15 +13,9 @@ const {
   matrixToolkit: { deepClone, makeMatrix }
 } = toolkit
 
-export interface CheatGameResult {
-  emptyCells: number
-  statePatch: Partial<GameState> | null
-}
-
 const controlButtons: ControlButton[] = [
   { key: 'submit', text: '提交', variant: 'primary' },
-  { key: 'cheat', text: '作弊', variant: 'warning' },
-  { key: 'reset', text: '重置', variant: 'warning' },
+  { key: 'reset', text: '清空', variant: 'subtle' },
   { key: 'rebuild', text: '重建', variant: 'danger' }
 ]
 
@@ -59,7 +53,7 @@ export const createGameState = (difficulty: GameDifficulty = 'medium'): GameStat
   const { puzzle, solution } = createPuzzleBundle(difficulty)
 
   return {
-    title: '数独游戏',
+    title: '凹凹数独',
     matrix: puzzle,
     cloneMatrix: deepClone(puzzle),
     solutionMatrix: deepClone(solution),
@@ -162,44 +156,3 @@ export const createResetGamePatch = (
   activeValue: null,
   ...resetCheckState()
 })
-
-// 全局提示会补齐所有仍为空的可编辑格子，并记录哪些数字来自系统代填。
-export const createCheatGameResult = (
-  state: Pick<GameState, 'matrix' | 'cloneMatrix' | 'solutionMatrix' | 'cheatMarks'>
-): CheatGameResult => {
-  const emptyCells = state.matrix.reduce((count, row, rowIndex) => {
-    return count + row.filter((cell, colIndex) => !state.cloneMatrix[rowIndex][colIndex] && !cell).length
-  }, 0)
-
-  if (!emptyCells) {
-    return {
-      emptyCells: 0,
-      statePatch: null
-    }
-  }
-
-  const nextMatrix = state.matrix.map((row, rowIndex) =>
-    row.map((cell, colIndex) => {
-      const isFixedCell = Boolean(state.cloneMatrix[rowIndex][colIndex])
-      return isFixedCell || cell ? cell : state.solutionMatrix[rowIndex][colIndex]
-    })
-  )
-  const nextCheatMarks = state.cheatMarks.map((row, rowIndex) =>
-    row.map((marked, colIndex) => {
-      const isFixedCell = Boolean(state.cloneMatrix[rowIndex][colIndex])
-      const wasFilledByCheat = !isFixedCell && !state.matrix[rowIndex][colIndex] && Boolean(nextMatrix[rowIndex][colIndex])
-      return marked || wasFilledByCheat
-    })
-  )
-
-  return {
-    emptyCells,
-    statePatch: {
-      matrix: nextMatrix,
-      cheatMarks: nextCheatMarks,
-      gridPosition: null,
-      activeValue: null,
-      ...resetCheckState()
-    }
-  }
-}

@@ -48,7 +48,6 @@
 
       <view :class="styles['input-panel']">
         <text :class="styles['selection-label']">{{ selectionLabel }}</text>
-        <text :class="styles['selection-tip']">{{ selectionTip }}</text>
 
         <view :class="styles['keypad-row']">
           <view
@@ -66,13 +65,20 @@
             :class="quickActionButtonClass('neutral', !gridPosition && !activeValue)"
             @tap="handleClear"
           >
-            撤销
+            <view :class="joinClasses(styles['quick-action-icon'], styles['quick-action-icon--undo'])">
+              <text>↺</text>
+            </view>
+            <text>撤销</text>
           </view>
           <view
             :class="quickActionButtonClass('hint', !gridPosition)"
             @tap="handleHint"
           >
-            提示
+            <view :class="joinClasses(styles['quick-action-icon'], styles['quick-action-icon--bulb'])">
+              <view :class="styles['quick-action-icon-bulb-head']"></view>
+              <view :class="styles['quick-action-icon-bulb-base']"></view>
+            </view>
+            <text>提示</text>
           </view>
         </view>
       </view>
@@ -90,6 +96,8 @@
         </view>
       </view>
     </view>
+
+    <AppFeedback />
   </view>
 </template>
 
@@ -98,6 +106,7 @@ import { computed, nextTick, onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { useMainStore } from '@/stores/main'
+import AppFeedback from '@/components/app-feedback.vue'
 import { getBoardCellClassList, getBoardCellStyle } from './board-cell'
 import { useBoardDragSelection } from './useBoardDragSelection'
 import styles from './index.module.scss'
@@ -138,16 +147,6 @@ const selectionLabel = computed(() => {
 
   const { rowIndex, colIndex } = gridPosition.value
   return `第 ${rowIndex + 1} 行，第 ${colIndex + 1} 列`
-})
-
-const selectionTip = computed(() => {
-  if (gridPosition.value) {
-    return '点击数字直接填入，点“撤销”可清空当前格。'
-  }
-
-  return activeValue.value
-    ? `当前高亮数字 ${activeValue.value}，再次点击相同数字可取消。`
-    : '未选中格子时，点击数字会切换同数字高亮。'
 })
 
 const boardCellClass = (rowIndex, colIndex, value) =>

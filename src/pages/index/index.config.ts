@@ -1,3 +1,3 @@
 export default definePageConfig({
-  navigationBarTitleText: '数独游戏'
+  navigationBarTitleText: '凹凹数独'
 })

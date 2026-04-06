@@ -6,7 +6,7 @@ export interface GridPosition {
   rowIndex: number
   colIndex: number
 }
-export type GameActionType = 'reset' | 'rebuild' | 'submit' | 'cheat'
+export type GameActionType = 'reset' | 'rebuild' | 'submit'
 export type ActionButtonVariant = 'primary' | 'neutral' | 'subtle' | 'warning' | 'danger'
 
 export interface ControlButton {

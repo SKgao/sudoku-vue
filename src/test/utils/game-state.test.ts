@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import type { GameState } from '@/types/sudoku'
 import {
   createCheatCurrentGridPatch,
-  createCheatGameResult,
   createClearCurrentGridPatch,
   createGridSelectionPatch,
   createModifyGridPatch,
@@ -23,7 +22,7 @@ const createFixtureState = (): GameState => {
   puzzle[0][2] = 0
 
   return {
-    title: '数独游戏',
+    title: '凹凹数独',
     matrix: deepClone(puzzle),
     cloneMatrix: deepClone(puzzle),
     solutionMatrix: deepClone(solvedBoard),
@@ -93,20 +92,6 @@ describe('game-state', () => {
     expect(patch.activeValue).toBeNull()
     expect(patch.clearErrorMarks).toBe(true)
     expect(patch.isSuccess).toBeNull()
-  })
-
-  it('能补齐所有未完成的可编辑格子，并返回补齐数量', () => {
-    const state = createFixtureState()
-    state.matrix[0][2] = 4
-    const result = createCheatGameResult(state)
-
-    expect(result.emptyCells).toBe(1)
-    expect(result.statePatch?.matrix?.[0][1]).toBe(solvedBoard[0][1])
-    expect(result.statePatch?.matrix?.[0][2]).toBe(4)
-    expect(result.statePatch?.cheatMarks?.[0][1]).toBe(true)
-    expect(result.statePatch?.cheatMarks?.[0][2]).toBe(false)
-    expect(result.statePatch?.gridPosition).toBeNull()
-    expect(result.statePatch?.activeValue).toBeNull()
   })
 
   it('能产出提交校验结果', () => {
